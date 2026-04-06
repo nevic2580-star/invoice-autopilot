@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invoice AutoPilot - 시스템 매뉴얼 프레젠테이션</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; font-family:'Noto Sans KR', sans-serif; background:#0a0e1a; }
+
+  /* ===== SLIDE CONTAINER ===== */
+  .slides-wrapper { width:100%; height:100%; position:relative; }
+  .slide {
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    display:none; flex-direction:column; justify-content:center; align-items:center;
+    padding:60px 80px; opacity:0; pointer-events:none;
+  }
+  .slide.active {
+    display:flex; opacity:1; pointer-events:auto;
+    animation: slideIn 0.4s ease forwards;
+  }
+  @keyframes slideIn {
+    from { opacity:0; transform:translateX(40px); }
+    to { opacity:1; transform:translateX(0); }
+  }
+
+  /* ===== TYPOGRAPHY ===== */
+  .slide-number {
+    position:absolute; top:30px; right:40px;
+    font-size:14px; font-weight:500; color:rgba(255,255,255,0.3);
+  }
+  .slide-title {
+    font-size:42px; font-weight:800; color:#fff;
+    margin-bottom:12px; line-height:1.3;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+  .slide-subtitle {
+    font-size:20px; font-weight:400; color:rgba(255,255,255,0.55);
+    margin-bottom:40px; text-align:center;
+  }
+  .content-box {
+    width:100%; max-width:1100px; text-align:left;
+  }
+  .content-box h3 {
+    font-size:22px; font-weight:700; color:#93c5fd; margin-bottom:16px;
+    padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .content-box h3 .emoji { margin-right:8px; }
+  .content-box ul { list-style:none; padding:0; }
+  .content-box li {
+    font-size:16px; line-height:1.75; color:rgba(255,255,255,0.82);
+    padding:8px 0 8px 28px; position:relative;
+  }
+  .content-box li::before {
+    content:'▸'; position:absolute; left:4px; top:8px;
+    color:#60a5fa; font-size:16px; font-weight:700;
+  }
+  .content-box li strong { color:#fff; font-weight:600; }
+  .content-box li code {
+    background:rgba(96,165,250,0.15); color:#93c5fd;
+    padding:2px 8px; border-radius:4px; font-family:monospace; font-size:14px;
+  }
+  .content-box p {
+    font-size:16px; line-height:1.8; color:rgba(255,255,255,0.75);
+    margin-bottom:12px;
+  }
+
+  /* ===== TWO COLUMN ===== */
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+  .col-card {
+    background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06);
+    border-radius:16px; padding:28px;
+  }
+  .col-card h4 {
+    font-size:18px; font-weight:700; color:#c4b5fd;
+    margin-bottom:14px;
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-diagram {
+    display:flex; align-items:center; justify-content:center;
+    gap:12px; margin:30px 0 40px; flex-wrap:wrap;
+  }
+  .flow-step {
+    background: linear-gradient(135deg, rgba(96,165,250,0.12), rgba(167,139,250,0.12));
+    border:1px solid rgba(96,165,250,0.25);
+    border-radius:14px; padding:20px 24px; text-align:center; min-width:130px;
+  }
+  .flow-step .icon { font-size:28px; margin-bottom:6px; }
+  .flow-step .label { font-size:13px; font-weight:600; color:#c4b5fd; }
+  .flow-step .status { font-size:11px; color:rgba(255,255,255,0.45); margin-top:4px; }
+  .flow-arrow { font-size:24px; color:rgba(96,165,250,0.5); }
+
+  /* ===== INFO BOX ===== */
+  .info-box {
+    background:rgba(96,165,250,0.06); border:1px solid rgba(96,165,250,0.18);
+    border-radius:12px; padding:20px 24px; margin-top:24px;
+  }
+  .info-box .info-title { font-size:14px; font-weight:700; color:#60a5fa; margin-bottom:8px; }
+  .info-box p { font-size:14px; color:rgba(255,255,255,0.65); margin:0; line-height:1.7; }
+
+  .warning-box {
+    background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.2);
+    border-radius:12px; padding:20px 24px; margin-top:24px;
+  }
+  .warning-box .info-title { font-size:14px; font-weight:700; color:#fbbf24; margin-bottom:8px; }
+  .warning-box p { font-size:14px; color:rgba(255,255,255,0.65); margin:0; line-height:1.7; }
+
+  /* ===== TABLE ===== */
+  .manual-table {
+    width:100%; border-collapse:collapse; margin:16px 0;
+  }
+  .manual-table th {
+    background:rgba(96,165,250,0.12); color:#93c5fd; padding:12px 16px;
+    font-size:14px; font-weight:600; text-align:left;
+    border-bottom:1px solid rgba(96,165,250,0.2);
+  }
+  .manual-table td {
+    padding:12px 16px; font-size:14px; color:rgba(255,255,255,0.75);
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  .manual-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+  /* ===== BADGE ===== */
+  .badge {
+    display:inline-block; padding:3px 10px; border-radius:6px;
+    font-size:12px; font-weight:600; margin-right:6px;
+  }
+  .badge-blue { background:rgba(96,165,250,0.15); color:#60a5fa; }
+  .badge-green { background:rgba(52,211,153,0.15); color:#34d399; }
+  .badge-amber { background:rgba(251,191,36,0.15); color:#fbbf24; }
+  .badge-red { background:rgba(248,113,113,0.15); color:#f87171; }
+  .badge-purple { background:rgba(167,139,250,0.15); color:#a78bfa; }
+
+  /* ===== NAVIGATION ===== */
+  .nav-bar {
+    position:fixed; bottom:0; left:0; right:0; z-index:100;
+    background:rgba(10,14,26,0.92); backdrop-filter:blur(12px);
+    border-top:1px solid rgba(255,255,255,0.06);
+    display:flex; justify-content:center; align-items:center; gap:20px;
+    padding:14px 30px;
+  }
+  .nav-btn {
+    background:rgba(96,165,250,0.1); border:1px solid rgba(96,165,250,0.2);
+    color:#93c5fd; padding:10px 24px; border-radius:10px;
+    font-size:14px; font-weight:600; cursor:pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background:rgba(96,165,250,0.2); transform:translateY(-1px); }
+  .nav-btn:active { transform:scale(0.97); }
+  .progress-text { color:rgba(255,255,255,0.4); font-size:13px; font-weight:500; }
+
+  /* ===== DOT INDICATOR ===== */
+  .dots {
+    display:flex; gap:6px; align-items:center;
+  }
+  .dot {
+    width:8px; height:8px; border-radius:50%;
+    background:rgba(255,255,255,0.15); transition:all 0.3s;
+  }
+  .dot.active { background:#60a5fa; width:24px; border-radius:4px; }
+
+  /* ===== COVER SLIDE SPECIAL ===== */
+  .cover-meta {
+    font-size:14px; color:rgba(255,255,255,0.35); margin-top:20px;
+  }
+
+  /* ===== PDF DOWNLOAD BUTTON ===== */
+  .pdf-btn {
+    background: linear-gradient(135deg, rgba(244,63,94,0.15), rgba(251,113,133,0.15));
+    border:1px solid rgba(244,63,94,0.3);
+    color:#fb7185; padding:10px 24px; border-radius:10px;
+    font-size:14px; font-weight:700; cursor:pointer;
+    transition: all 0.2s; font-family:inherit;
+  }
+  .pdf-btn:hover { background:rgba(244,63,94,0.25); transform:translateY(-1px); }
+
+  /* ===== PRINT ===== */
+  @media print {
+    html, body {
+      width:210mm; height:auto; overflow:visible !important;
+      background:#fff !important; color:#111 !important;
+      -webkit-print-color-adjust:exact; print-color-adjust:exact;
+    }
+    @page { size:A4 portrait; margin:18mm 20mm; }
+
+    .nav-bar, .pdf-btn { display:none !important; }
+    .slides-wrapper { height:auto !important; position:static !important; }
+
+    .slide {
+      display:flex !important; position:relative !important;
+      opacity:1 !important; pointer-events:auto !important;
+      animation:none !important; transform:none !important;
+      page-break-after:always; page-break-inside:avoid;
+      width:100% !important; height:auto !important; min-height:92vh;
+      background:#fff !important; padding:30px 20px !important;
+      border-bottom:none !important;
+    }
+    .slide:last-child { page-break-after:auto; }
+
+    /* Typography for print */
+    .slide-title {
+      background:none !important; -webkit-background-clip:unset !important;
+      background-clip:unset !important;
+      -webkit-text-fill-color:#1a3a6b !important; color:#1a3a6b !important;
+      font-size:28pt !important;
+    }
+    .slide-subtitle { color:#555 !important; font-size:14pt !important; }
+    .slide-number { color:#999 !important; font-size:10pt !important; }
+    .cover-meta { color:#888 !important; }
+
+    .content-box h3 {
+      color:#1a3a6b !important; font-size:14pt !important;
+      border-bottom:1px solid #ccc !important;
+    }
+    .content-box li {
+      color:#333 !important; font-size:11pt !important; line-height:1.6 !important;
+    }
+    .content-box li::before { color:#2563eb !important; }
+    .content-box li strong { color:#111 !important; }
+    .content-box li code {
+      background:#e8f0fe !important; color:#1a56db !important;
+      border:1px solid #c3d9f7 !important;
+    }
+    .content-box p { color:#444 !important; font-size:11pt !important; }
+
+    /* Cards */
+    .col-card {
+      background:#f8fafc !important; border:1px solid #e2e8f0 !important;
+      border-radius:8px !important;
+    }
+    .col-card h4 { color:#1e40af !important; }
+    .two-col { gap:20px !important; }
+
+    /* Flow diagram */
+    .flow-step {
+      background:#eef2ff !important; border:1px solid #c7d2fe !important;
+    }
+    .flow-step .label { color:#4338ca !important; }
+    .flow-step .status { color:#666 !important; }
+    .flow-step .icon { font-size:22px !important; }
+    .flow-arrow { color:#6366f1 !important; }
+
+    /* Info / Warning boxes */
+    .info-box {
+      background:#eff6ff !important; border:1px solid #bfdbfe !important;
+    }
+    .info-box .info-title { color:#1d4ed8 !important; }
+    .info-box p { color:#444 !important; }
+    .warning-box {
+      background:#fffbeb !important; border:1px solid #fde68a !important;
+    }
+    .warning-box .info-title { color:#b45309 !important; }
+    .warning-box p { color:#444 !important; }
+
+    /* Tables */
+    .manual-table th {
+      background:#e0e7ff !important; color:#1e3a5f !important;
+      border:1px solid #c7d2fe !important;
+    }
+    .manual-table td {
+      color:#333 !important;
+      border:1px solid #e2e8f0 !important;
+    }
+
+    /* Badges */
+    .badge { border:1px solid #ccc !important; }
+    .badge-blue { background:#dbeafe !important; color:#1d4ed8 !important; }
+    .badge-green { background:#d1fae5 !important; color:#065f46 !important; }
+    .badge-amber { background:#fef3c7 !important; color:#92400e !important; }
+    .badge-red { background:#fee2e2 !important; color:#991b1b !important; }
+    .badge-purple { background:#ede9fe !important; color:#5b21b6 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slides-wrapper" id="slidesWrapper">
+
+  <!-- ====== SLIDE 1: TITLE ====== -->
+  <div class="slide active" data-slide="1">
+    <div class="slide-number">1 / 12</div>
+    <div style="font-size:54px; margin-bottom:16px;">⚓</div>
+    <div class="slide-title" style="font-size:48px; text-align:center;">Invoice AutoPilot</div>
+    <div class="slide-subtitle">차세대 선박 인보이스 자동화 시스템 — 사용자 매뉴얼</div>
+    <div style="display:flex; gap:12px; margin-bottom:30px;">
+      <span class="badge badge-blue">📝 업체(Vendor)</span>
+      <span class="badge badge-green">👨‍🔧 감독관(Supervisor)</span>
+      <span class="badge badge-purple">👔 팀장(Team Lead)</span>
+      <span class="badge badge-amber">💰 선급금(Advance)</span>
+    </div>
+    <div class="content-box" style="text-align:center;">
+      <p>이메일 기반 수기 결재를 대체하는 <strong>실시간 디지털 결재 워크플로우</strong></p>
+      <p>다중 통화 자동 USD 환산 · 선급금 다면 집계 · 감사 이력 관리</p>
+    </div>
+    <div class="cover-meta">2026. 04 · 스마트 해운 회계팀 & 시스템 개발팀</div>
+  </div>
+
+  <!-- ====== SLIDE 2: SYSTEM OVERVIEW & SHARING ====== -->
+  <div class="slide" data-slide="2">
+    <div class="slide-number">2 / 12</div>
+    <div class="slide-title">🌐 접속 방법 및 내부 공유</div>
+    <div class="content-box">
+      <h3>접속 경로 안내</h3>
+      <table class="manual-table">
+        <tr><th>방법</th><th>주소(URL)</th><th>설명</th></tr>
+        <tr>
+          <td><strong>로컬 직접 실행</strong></td>
+          <td><code>index.html</code> 더블클릭</td>
+          <td>본인 PC에서 바로 실행 (가장 간편)</td>
+        </tr>
+        <tr>
+          <td><strong>로컬 서버</strong></td>
+          <td><code>http://localhost:8080</code></td>
+          <td>server.ps1 실행 후 접속</td>
+        </tr>
+        <tr>
+          <td><strong>사내 네트워크 공유</strong></td>
+          <td><code>http://[내PC IP]:8080</code></td>
+          <td>같은 Wi-Fi/LAN 내 동료에게 공유</td>
+        </tr>
+        <tr>
+          <td><strong>OneDrive 공유</strong></td>
+          <td>폴더 우클릭 → 공유 링크 생성</td>
+          <td>OneDrive 바탕화면 폴더이므로 링크 공유 가능</td>
+        </tr>
+      </table>
+
+      <div class="info-box">
+        <div class="info-title">💡 내 PC IP 확인 방법 (사내 공유 시)</div>
+        <p>PowerShell에서 <code>ipconfig</code> 입력 → <strong>IPv4 주소</strong> 확인 (예: 192.168.0.15)<br>
+        → 동료에게 <code>http://192.168.0.15:8080</code> 주소 공유</p>
+      </div>
+
+      <div class="warning-box" style="margin-top:16px;">
+        <div class="info-title">⚠️ 서버 실행 방법</div>
+        <p><code>server.ps1</code> 파일을 우클릭 → "PowerShell에서 실행"<br>
+        또는 PowerShell 열고: <code>Set-Location "인보이스자동화"; .\server.ps1</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 3: WORKFLOW ====== -->
+  <div class="slide" data-slide="3">
+    <div class="slide-number">3 / 12</div>
+    <div class="slide-title">🔄 결재 워크플로우 전체 흐름</div>
+    <div class="content-box">
+      <div class="flow-diagram">
+        <div class="flow-step">
+          <div class="icon">📝</div>
+          <div class="label">업체 입력</div>
+          <div class="status">Draft → 접수</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="icon">👨‍🔧</div>
+          <div class="label">감독 확인</div>
+          <div class="status">1차 검토/승인</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="icon">👔</div>
+          <div class="label">팀장 결재</div>
+          <div class="status">최종 승인</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="icon">💰</div>
+          <div class="label">선급금 정산</div>
+          <div class="status">USD 환산 집계</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="icon">🖨️</div>
+          <div class="label">커버 출력</div>
+          <div class="status">A4 PDF 인쇄</div>
+        </div>
+      </div>
+
+      <h3>📊 상태(Status) 흐름도</h3>
+      <table class="manual-table">
+        <tr><th>상태</th><th>의미</th><th>담당</th></tr>
+        <tr><td><span class="badge badge-amber">입력</span></td><td>업체가 임시 저장 (아직 미제출)</td><td>업체</td></tr>
+        <tr><td><span class="badge badge-blue">접수</span></td><td>업체가 공식 제출 → 진행상황 & 선급금에 동시 활성화</td><td>업체 → 감독</td></tr>
+        <tr><td><span class="badge badge-green">감독확인</span></td><td>감독관 1차 검토 완료</td><td>감독 → 팀장</td></tr>
+        <tr><td><span class="badge badge-purple">팀장승인</span></td><td>팀장 최종 결재 완료</td><td>팀장</td></tr>
+        <tr><td><span class="badge badge-green">지급완료</span></td><td>회계 처리 및 지급 종결</td><td>시스템</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 4: LOGIN ====== -->
+  <div class="slide" data-slide="4">
+    <div class="slide-number">4 / 12</div>
+    <div class="slide-title">🔐 로그인 및 권한 체계</div>
+    <div class="content-box">
+      <h3>테스트 계정 정보</h3>
+      <table class="manual-table">
+        <tr><th>구분</th><th>ID</th><th>비밀번호</th><th>역할</th><th>접근 가능 메뉴</th></tr>
+        <tr><td>업체 (Vendor)</td><td><code>vendor</code></td><td><code>vendor123</code></td><td>업체</td><td>인보이스 등록, 내역 조회</td></tr>
+        <tr><td>감독관 (Supervisor)</td><td><code>admin</code></td><td><code>admin123</code></td><td>감독관</td><td>전체 메뉴 접근</td></tr>
+        <tr><td>팀장 (Team Lead)</td><td><code>manager</code></td><td><code>manager123</code></td><td>팀장</td><td>전체 메뉴 접근</td></tr>
+      </table>
+
+      <div class="two-col" style="margin-top:24px;">
+        <div class="col-card">
+          <h4>🛡️ 보안 기능</h4>
+          <ul>
+            <li>비밀번호 SHA-256 해싱 저장</li>
+            <li>5회 로그인 실패 시 60초 계정 잠금</li>
+            <li>자동 세션 만료 (설정에서 조절 가능)</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4>👤 역할별 UI 분리</h4>
+          <ul>
+            <li><strong>업체:</strong> 등록/조회만 가능, 대시보드 숨김</li>
+            <li><strong>감독관:</strong> 전체 메뉴 + 1차 결재 권한</li>
+            <li><strong>팀장:</strong> 전체 메뉴 + 최종 결재 권한</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 5: VENDOR PAGE ====== -->
+  <div class="slide" data-slide="5">
+    <div class="slide-number">5 / 12</div>
+    <div class="slide-title">📝 업체(Vendor) 인보이스 등록 매뉴얼</div>
+    <div class="content-box">
+      <h3>인보이스 등록 화면 주요 필드</h3>
+      <div class="two-col">
+        <div class="col-card">
+          <h4>🚢 필수 입력 정보</h4>
+          <ul>
+            <li><strong>선박명/코드:</strong> 드롭다운에서 선택</li>
+            <li><strong>기기 분류(Kind):</strong> Main Engine, Aux Engine 등</li>
+            <li><strong>비용 구분(Category):</strong> Hull, Engine 등 자동 매핑</li>
+            <li><strong>계정번호(GLV):</strong> Kind 선택 시 자동 입력</li>
+            <li><strong>통화/견적가/실적가:</strong> 금액 입력 시 쉼표 자동 포맷</li>
+            <li><strong>작업 국가 → 항구:</strong> 국가 선택 후 항구 드롭다운 제공</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4>📋 자동 계산 필드</h4>
+          <ul>
+            <li><strong>차액(Difference):</strong> 실적가 - 견적가 자동 산출</li>
+            <li><strong>차이율(%):</strong> 실적/견적 비율 자동 표시</li>
+            <li>입력 완료 후 <strong>[제출]</strong> 클릭 → 상태가 <code>접수</code>로 변경</li>
+            <li>제출 전까지는 <code>입력(Draft)</code> 상태로 임시 저장 가능</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:24px;">
+        <div class="info-title">💡 핵심 포인트</div>
+        <p>업체가 <strong>[제출]</strong> 버튼을 누르는 순간 → <strong>진행상황 페이지(결재 대기열)</strong>와 <strong>선급금 페이지</strong>에 동시에 인보이스가 활성화됩니다.<br>
+        임시 저장(입력) 상태에서는 감독관에게 보이지 않으므로 안심하고 작성하세요.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 6: SUPERVISOR PAGE ====== -->
+  <div class="slide" data-slide="6">
+    <div class="slide-number">6 / 12</div>
+    <div class="slide-title">👨‍🔧 감독관(Supervisor) 결재 매뉴얼</div>
+    <div class="content-box">
+      <h3>감독확인 대기열 화면</h3>
+      <ul>
+        <li>업체가 제출한 인보이스가 <span class="badge badge-amber">접수</span> 상태로 <strong>[감독확인 대기]</strong> 탭에 실시간 나열됩니다.</li>
+        <li>각 인보이스 카드에는 <strong>선박명, GMS코드, GLV 계정, 기기분류, 비용구분</strong>이 한눈에 표시됩니다.</li>
+        <li>견적가 대비 실적가가 <strong>+20% 초과</strong> 시 <span class="badge badge-red">⚠️ 견적초과</span> 경고 뱃지가 자동으로 달립니다.</li>
+        <li>동일 선박/계정으로 유사 청구가 감지되면 <span class="badge badge-amber">중복 의심</span> 알림이 표시됩니다.</li>
+      </ul>
+
+      <h3 style="margin-top:24px;">승인 절차</h3>
+      <ul>
+        <li><strong>① 상세 확인:</strong> 카드를 클릭하여 견적/실적 차이, 작업기간, 항구 정보 등 검토</li>
+        <li><strong>② 코멘트 입력:</strong> 특기사항이나 확인 내용을 메모란에 기재</li>
+        <li><strong>③ [감독확인] 클릭:</strong> 상태가 <code>감독확인</code>으로 변경 → 팀장 대기열로 이관</li>
+      </ul>
+
+      <div class="warning-box" style="margin-top:20px;">
+        <div class="info-title">⚠️ 반려 시</div>
+        <p>검토 결과 이상이 있으면 <strong>[반려]</strong> 버튼으로 업체에 재작성을 요청할 수 있습니다.<br>반려 사유를 상세히 기재해주세요.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 7: TEAM LEAD PAGE ====== -->
+  <div class="slide" data-slide="7">
+    <div class="slide-number">7 / 12</div>
+    <div class="slide-title">👔 팀장(Team Lead) 최종 결재 매뉴얼</div>
+    <div class="content-box">
+      <h3>팀장 결재 대기열</h3>
+      <ul>
+        <li>감독관이 1차 승인 완료한 건만 <strong>[팀장확인 대기]</strong> 탭에 나열됩니다.</li>
+        <li>감독관이 남긴 <strong>코멘트 및 승인 일시</strong>를 확인할 수 있습니다.</li>
+        <li>견적 초과 경고, 중복 의심 등의 <strong>리스크 뱃지가 그대로 유지</strong>되어 전달됩니다.</li>
+      </ul>
+
+      <h3 style="margin-top:24px;">최종 결재 프로세스</h3>
+      <ul>
+        <li><strong>① 감독 코멘트 확인:</strong> 1차 검토자의 의견 열람</li>
+        <li><strong>② 금액/내역 최종 확인:</strong> 비용 적정성 판단</li>
+        <li><strong>③ [팀장 승인] 클릭:</strong> 최종 결재 완료 → <code>팀장승인</code> / <code>결재완료</code> 상태</li>
+      </ul>
+
+      <h3 style="margin-top:24px;">커버 출력 기능 (A4 PDF)</h3>
+      <ul>
+        <li>결재 완료된 건에 대해 <strong>[인쇄/출력]</strong> 버튼 → 공식 결재 커버 페이지가 생성됩니다.</li>
+        <li>인쇄 설정: A4 세로(Portrait), <strong>상하좌우 35mm 여백</strong> 자동 적용</li>
+        <li>Ctrl+P 또는 브라우저 출력 → PDF로 저장 가능</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 8: ADVANCE PAYMENT ====== -->
+  <div class="slide" data-slide="8">
+    <div class="slide-number">8 / 12</div>
+    <div class="slide-title">💰 선급금 관리 (Advance Payment) 매뉴얼</div>
+    <div class="content-box">
+      <h3>핵심 아키텍처: 진행 상황 동기화</h3>
+      <ul>
+        <li>인보이스가 <strong>[접수]</strong> 상태가 되는 즉시, 선급금 목록에 <strong>자동 활성화</strong>됩니다.</li>
+        <li>임시 저장(입력) 상태의 인보이스는 <strong>목록에서 완전 배제</strong>됩니다.</li>
+        <li>감독관이 100건의 인보이스 중 이번 달 정산이 필요한 50건만 <strong>체크박스(☑)로 선택</strong> 가능합니다.</li>
+      </ul>
+
+      <div class="two-col" style="margin-top:20px;">
+        <div class="col-card">
+          <h4>🔄 환율 변환</h4>
+          <ul>
+            <li>화면 상단에 <strong>KRW, EUR, JPY, SGD → USD</strong> 환율 입력란</li>
+            <li>입력 즉시 모든 인보이스 금액이 <strong>실시간 USD로 자동 변환</strong></li>
+            <li>각 행에 직접 USD 금액 수기입력도 가능</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4>📊 4-Dimension 집계</h4>
+          <ul>
+            <li><strong>선박별:</strong> 체크된 인보이스를 선박 기준 합산</li>
+            <li><strong>계정(GLV)별:</strong> 회계 계정과목별 소계</li>
+            <li><strong>비용구분별:</strong> Hull/Engine/Elect 등 카테고리별</li>
+            <li><strong>기기분류별:</strong> M/E, A/E, Gen 등 기기별 합산</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:20px;">
+        <div class="info-title">📥 Excel 보고서 다운로드</div>
+        <p>체크된 인보이스들을 <strong>5개 시트(목록, 선박별, 계정별, 비용구분별, 기기분류별)</strong>로 나뉜 XLSX 파일로 즉시 다운로드합니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 9: DASHBOARD ====== -->
+  <div class="slide" data-slide="9">
+    <div class="slide-number">9 / 12</div>
+    <div class="slide-title">📊 대시보드 (Dashboard) 매뉴얼</div>
+    <div class="content-box">
+      <h3>실시간 비용 현황 시각화</h3>
+      <div class="two-col">
+        <div class="col-card">
+          <h4>📈 KPI 통계 카드</h4>
+          <ul>
+            <li><strong>총 인보이스 수:</strong> 전체 등록 건수</li>
+            <li><strong>총 비용:</strong> 실적가(Actual) 기준 합산</li>
+            <li><strong>결재 대기:</strong> 감독/팀장 확인 대기 건수</li>
+            <li><strong>평균 차이율:</strong> 견적 대비 실적 전체 평균 %</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4>📊 차트 시각화</h4>
+          <ul>
+            <li><strong>월별 비용 추이:</strong> 바 차트로 월별 발생 비용 비교</li>
+            <li><strong>기기분류 분포:</strong> 가로형 바 차트로 점유율(%) 표시</li>
+            <li><strong>선박 Top 5 지출:</strong> 유지보수비 최다 선박 랭킹</li>
+            <li><strong>통화 분포:</strong> KRW, USD, EUR 비율 원형 차트</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:20px;">
+        <div class="info-title">💡 대시보드 vs 설정 페이지</div>
+        <p>대시보드는 <strong>경영 데이터 시각화</strong> 전용이며, 설정(Settings) 페이지는 <strong>시스템 관리 및 보안</strong> 전용입니다.<br>
+        두 페이지는 완전히 독립된 기능을 가지고 있습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 10: SETTINGS ====== -->
+  <div class="slide" data-slide="10">
+    <div class="slide-number">10 / 12</div>
+    <div class="slide-title">⚙️ 환경 설정 (Settings) 매뉴얼</div>
+    <div class="content-box">
+      <div class="two-col">
+        <div class="col-card">
+          <h4>🔒 보안 설정</h4>
+          <ul>
+            <li><strong>2단계 인증(2FA):</strong> 활성화/비활성화 토글</li>
+            <li><strong>자동 로그아웃:</strong> 1시간 / 4시간 / 8시간 선택</li>
+            <li><strong>데이터 보존기간:</strong> 1년 / 3년 / 5년 / 영구</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4>🔔 알림 설정</h4>
+          <ul>
+            <li><strong>결재 요청 알림:</strong> 새 인보이스 접수 시 알림</li>
+            <li><strong>지급 완료 통보:</strong> 결재 완료 시 알림</li>
+            <li><strong>시스템 공지:</strong> 유지보수/업데이트 알림</li>
+          </ul>
+        </div>
+      </div>
+      <div class="two-col" style="margin-top:20px;">
+        <div class="col-card">
+          <h4>🔗 ERP 통합 (Integration)</h4>
+          <ul>
+            <li><strong>시스템 연동:</strong> SAP / Oracle 자동 동기화 ON/OFF</li>
+            <li><strong>동기화 주기:</strong> 실시간 / 1시간 / 일 1회</li>
+            <li><strong>API Key:</strong> 보안 키 재발급 및 관리</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4>🛠️ 관리자 도구</h4>
+          <ul>
+            <li><strong>감사 로그 추출:</strong> 변경 이력 파일(JSON) 다운로드</li>
+            <li><strong>Factory Reset:</strong> 전체 데이터 초기화 (확인 2회)</li>
+            <li><strong>데모 데이터:</strong> 25건 테스트 인보이스 시드</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 11: COVER PRINT ====== -->
+  <div class="slide" data-slide="11">
+    <div class="slide-number">11 / 12</div>
+    <div class="slide-title">🖨️ 인보이스 커버 인쇄 매뉴얼</div>
+    <div class="content-box">
+      <h3>커버 페이지 구성</h3>
+      <ul>
+        <li>인보이스 상세 조회 화면에서 <strong>[인쇄 미리보기 / Print Preview]</strong> 버튼 클릭</li>
+        <li>A4 규격 결재 표지가 화면 하단에 렌더링됩니다.</li>
+        <li>표지에는 <strong>선박명, 작업내역, 금액(견적/실적/차액), 승인자 서명란</strong>이 포함됩니다.</li>
+      </ul>
+
+      <h3 style="margin-top:24px;">인쇄 설정 가이드</h3>
+      <table class="manual-table">
+        <tr><th>항목</th><th>설정값</th></tr>
+        <tr><td>용지 크기</td><td>A4 (210 × 297 mm)</td></tr>
+        <tr><td>방향</td><td>세로 (Portrait)</td></tr>
+        <tr><td>여백</td><td><strong>상하좌우 35mm</strong> (시스템 자동 적용)</td></tr>
+        <tr><td>배경 그래픽</td><td>"배경 그래픽 인쇄" 체크 권장</td></tr>
+        <tr><td>PDF 저장</td><td>대상 프린터 → "PDF로 저장" 선택</td></tr>
+      </table>
+
+      <div class="warning-box" style="margin-top:20px;">
+        <div class="info-title">⚠️ 내용 잘림 방지</div>
+        <p>브라우저 인쇄 대화상자에서 <strong>"여백: 기본값"</strong>으로 설정하세요.<br>
+        시스템 CSS에 35mm 여백이 강제 적용되어 있어 내용이 잘리지 않습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== SLIDE 12: FAQ & END ====== -->
+  <div class="slide" data-slide="12">
+    <div class="slide-number">12 / 12</div>
+    <div class="slide-title">❓ FAQ & 기술 지원</div>
+    <div class="content-box">
+      <h3>자주 묻는 질문</h3>
+      <table class="manual-table">
+        <tr><th>질문</th><th>답변</th></tr>
+        <tr><td>데이터는 어디에 저장되나요?</td><td>브라우저 <strong>localStorage</strong>에 저장됩니다. 브라우저 캐시 삭제 시 초기화될 수 있으므로 주의하세요.</td></tr>
+        <tr><td>다른 PC에서도 같은 데이터를 보나요?</td><td>현재 버전은 <strong>로컬 기반</strong>이므로 각 PC마다 독립적입니다. 서버 DB 연동은 추후 업그레이드 예정입니다.</td></tr>
+        <tr><td>인보이스를 삭제할 수 있나요?</td><td>관리자(admin) 권한으로 인보이스 리스트에서 <strong>[삭제]</strong> 버튼으로 가능합니다.</td></tr>
+        <tr><td>엑셀 파일 포맷은요?</td><td><strong>.xlsx</strong> 형식이며, 5개 시트(목록/선박/계정/비용구분/기기분류)로 구성됩니다.</td></tr>
+        <tr><td>언어를 영어로 바꿀 수 있나요?</td><td>상단 헤더의 <strong>[🇰🇷 / 🇺🇲]</strong> 버튼으로 한/영 즉시 전환됩니다.</td></tr>
+      </table>
+
+      <div style="text-align:center; margin-top:40px; padding:30px; background:rgba(96,165,250,0.05); border-radius:16px; border:1px solid rgba(96,165,250,0.12);">
+        <div style="font-size:36px; margin-bottom:10px;">⚓</div>
+        <div style="font-size:20px; font-weight:700; color:#93c5fd; margin-bottom:8px;">Invoice AutoPilot</div>
+        <div style="font-size:14px; color:rgba(255,255,255,0.45);">Maritime Invoice Automation System</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.3); margin-top:12px;">© 2026 스마트 해운 회계팀</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ====== NAVIGATION BAR ====== -->
+<div class="nav-bar">
+  <button class="nav-btn" id="btnPrev" onclick="prevSlide()">◀ 이전</button>
+  <div class="dots" id="dotsContainer"></div>
+  <span class="progress-text" id="progressText">1 / 12</span>
+  <button class="nav-btn" id="btnNext" onclick="nextSlide()">다음 ▶</button>
+  <button class="pdf-btn" onclick="downloadPDF()">📥 PDF 다운로드</button>
+</div>
+
+<script>
+  const totalSlides = 12;
+  let current = 1;
+
+  // Build dots
+  const dotsContainer = document.getElementById('dotsContainer');
+  for (let i = 1; i <= totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 1 ? ' active' : '');
+    dot.dataset.slide = i;
+    dot.style.cursor = 'pointer';
+    dot.onclick = () => goToSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  function goToSlide(n) {
+    if (n < 1 || n > totalSlides || n === current) return;
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach(s => s.classList.remove('active'));
+    current = n;
+    const newSlide = document.querySelector(`.slide[data-slide="${current}"]`);
+    if (newSlide) newSlide.classList.add('active');
+
+    // Update dots
+    document.querySelectorAll('.dot').forEach(d => {
+      d.classList.toggle('active', parseInt(d.dataset.slide) === current);
+    });
+    document.getElementById('progressText').textContent = `${current} / ${totalSlides}`;
+  }
+
+  function nextSlide() { goToSlide(current + 1); }
+  function prevSlide() { goToSlide(current - 1); }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); nextSlide();
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); prevSlide();
+    }
+    if (e.key === 'Home') { e.preventDefault(); goToSlide(1); }
+    if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides); }
+  });
+
+  // PDF Download — show all slides, trigger print, restore
+  function downloadPDF() {
+    const slides = document.querySelectorAll('.slide');
+    const savedCurrent = current;
+    // Show all slides for printing
+    slides.forEach(s => s.classList.add('active'));
+    document.body.style.overflow = 'visible';
+    document.documentElement.style.overflow = 'visible';
+    document.querySelector('.slides-wrapper').style.height = 'auto';
+
+    setTimeout(() => {
+      window.print();
+      // Restore after print dialog closes
+      setTimeout(() => {
+        slides.forEach(s => s.classList.remove('active'));
+        const target = document.querySelector(`.slide[data-slide="${savedCurrent}"]`);
+        if (target) target.classList.add('active');
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+        document.querySelector('.slides-wrapper').style.height = '';
+      }, 500);
+    }, 300);
+  }
+</script>
+
+</body>
+</html>
